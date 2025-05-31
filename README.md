@@ -83,6 +83,28 @@ They can be installed all at once with:
 sudo apt install just rustc libglvnd-dev libwayland-dev libseat-dev libxkbcommon-dev libinput-dev udev dbus libdbus-1-dev libsystemd-dev libpixman-1-dev libssl-dev libflatpak-dev libpulse-dev pop-launcher libexpat1-dev libfontconfig-dev libfreetype-dev mold cargo libgbm-dev libclang-dev libpipewire-0.3-dev libpam0g-dev -y
 ```
 
+### Development Tools Setup
+
+For developers working on COSMIC SVM applications, additional development tools can be installed:
+
+```
+just dev-tools
+```
+
+This will install:
+- **Programming Languages**: Zig (latest), Crystal (latest)
+- **Mobile Development**: React Native CLI, Flutter, Kotlin, Android Studio
+- **Development Tools**: Insomnia API client
+- **Network Tools**: Tor, Tailscale, Yggdrasil, i2p
+- **PWA Tools**: Angular CLI, Create React App, Lighthouse, Workbox
+- **Specialized Tools**: OSVM CLI, Anza CLI tools (placeholders for future implementation)
+
+To verify your development tools installation:
+
+```
+just dev-tools-check
+```
+
 ### Testing
 
 The easiest way to test COSMIC DE currently is by building a systemd system extension (see `man systemd-sysext`).
