@@ -21,13 +21,13 @@ jobs:
         uses: actions/ai-inference@v1
         with:
           prompt: |
-            Summarize the following GitHub issue in one paragraph:
+            You are project manager for AI. Enhance and plan the execution of the following GitHub issue. make sure you explained well what we expect, and acceptance criteria, provide links that might help with more effecient execution
             Title: ${{ github.event.issue.title }}
             Body: ${{ github.event.issue.body }}
 
       - name: Comment with AI summary
         run: |
-          gh issue comment $ISSUE_NUMBER --body '${{ steps.inference.outputs.response }}'
+          gh issue comment $ISSUE_NUMBER --body "${{ steps.inference.outputs.response }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
