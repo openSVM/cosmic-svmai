@@ -88,10 +88,17 @@ check_command "git" "git"
 # Programming Languages
 echo ""
 echo "Programming Languages:"
+check_command "rustc" "Rust"
+check_command "cargo" "Cargo (Rust package manager)"
 check_command "zig" "Zig"
 check_command "crystal" "Crystal"
 check_command "node" "Node.js"
 check_command "npm" "npm"
+check_command "go" "Go"
+check_command "python3" "Python 3"
+check_command "pip3" "pip3"
+check_command "deno" "Deno"
+check_command "bun" "Bun"
 
 # Mobile Development
 echo ""
@@ -99,6 +106,13 @@ echo "Mobile Development:"
 check_command "npx" "npx (React Native)"
 check_path "$HOME/.local/flutter/bin/flutter" "Flutter"
 check_command "kotlin" "Kotlin"
+
+# Package Managers
+echo ""
+echo "Package Managers:"
+check_command "pnpm" "pnpm"
+check_command "yarn" "yarn"
+check_command "cargo" "Cargo"
 
 # Check Android Studio
 echo ""
@@ -111,6 +125,15 @@ elif check_path "/usr/local/android-studio" "Android Studio"; then
     :
 else
     echo_fail "Android Studio not found"
+fi
+
+# Check Visual Studio Code
+if check_snap "code" "Visual Studio Code"; then
+    :
+elif check_command "code" "Visual Studio Code"; then
+    :
+else
+    echo_fail "Visual Studio Code not found"
 fi
 
 # Check Insomnia
@@ -130,6 +153,26 @@ check_command "tailscale" "Tailscale"
 check_command "yggdrasil" "Yggdrasil"
 check_command "i2pd" "i2pd (I2P daemon)"
 
+# Container Tools
+echo ""
+echo "Container Tools:"
+check_command "docker" "Docker"
+check_command "docker-compose" "Docker Compose"
+
+# Version Control & Collaboration
+echo ""
+echo "Version Control & Collaboration:"
+check_command "gh" "GitHub CLI"
+
+# System Tools
+echo ""
+echo "System Tools:"
+check_command "jq" "jq (JSON processor)"
+check_command "htop" "htop"
+check_command "tmux" "tmux"
+check_command "fzf" "fzf (fuzzy finder)"
+check_command "shellcheck" "ShellCheck"
+
 # Specialized Tools
 echo ""
 echo "Specialized Tools:"
@@ -143,6 +186,22 @@ check_command "ng" "Angular CLI"
 check_command "create-react-app" "Create React App"
 check_command "lighthouse" "Lighthouse"
 check_command "workbox" "Workbox CLI"
+
+# Development & Testing Tools
+echo ""
+echo "Development & Testing Tools:"
+check_command "eslint" "ESLint"
+check_command "prettier" "Prettier"
+check_command "jest" "Jest"
+check_command "playwright" "Playwright"
+check_command "cypress" "Cypress"
+
+# Database Tools
+echo ""
+echo "Database Tools:"
+check_command "psql" "PostgreSQL client"
+check_command "sqlite3" "SQLite"
+check_command "redis-cli" "Redis CLI"
 
 echo ""
 echo "=============================================="

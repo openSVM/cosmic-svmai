@@ -16,8 +16,14 @@ just dev-tools-check
 
 ### Programming Languages
 
+- **Rust**: Systems programming language focused on safety, speed, and concurrency
 - **Zig (latest version)**: Fast, robust, optimal programming language
 - **Crystal (latest version)**: Fast as C, slick as Ruby
+- **Go**: Open source programming language for building simple, reliable, and efficient software
+- **Node.js & npm**: JavaScript runtime and package manager
+- **Python 3 & pip**: High-level programming language and package installer
+- **Deno**: Secure runtime for JavaScript and TypeScript
+- **Bun**: Fast all-in-one JavaScript runtime
 
 ### Mobile Development
 
@@ -28,7 +34,21 @@ just dev-tools-check
 
 ### Development Tools
 
+- **Visual Studio Code**: Lightweight but powerful source code editor
 - **Insomnia**: REST/GraphQL API client
+- **GitHub CLI**: Command line tool for GitHub
+- **fzf**: Command-line fuzzy finder
+
+### Container Tools
+
+- **Docker**: Platform for developing, shipping, and running applications in containers
+- **Docker Compose**: Tool for defining and running multi-container Docker applications
+
+### Package Managers
+
+- **pnpm**: Fast, disk space efficient package manager
+- **yarn**: Reliable, secure, and fast dependency management
+- **Cargo**: Rust package manager (installed with Rust)
 
 ### Network Tools
 
@@ -36,6 +56,28 @@ just dev-tools-check
 - **Tailscale**: Zero-config VPN built on WireGuard
 - **Yggdrasil**: End-to-end encrypted IPv6 network
 - **i2p**: Anonymous overlay network
+
+### System Tools
+
+- **jq**: Command-line JSON processor
+- **htop**: Interactive process viewer
+- **tmux**: Terminal multiplexer
+- **ShellCheck**: Static analysis tool for shell scripts
+- **vim/neovim**: Text editors
+
+### Database Tools
+
+- **PostgreSQL client**: Command line client for PostgreSQL
+- **SQLite**: Self-contained SQL database engine
+- **Redis CLI**: Command line interface for Redis
+
+### Development & Testing Tools
+
+- **ESLint**: JavaScript code analysis tool
+- **Prettier**: Code formatter
+- **Jest**: JavaScript testing framework
+- **Playwright**: Browser automation library
+- **Cypress**: End-to-end testing framework
 
 ### PWA Development Tools
 
@@ -53,6 +95,12 @@ just dev-tools-check
 
 If the automated installation fails or you prefer manual setup, you can install tools individually:
 
+### Rust
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source ~/.cargo/env
+```
+
 ### Zig
 ```bash
 # Download latest from https://ziglang.org/download/
@@ -67,6 +115,14 @@ sudo ln -s /opt/zig/zig /usr/local/bin/zig
 curl -fsSL https://crystal-lang.org/install.sh | sudo bash
 ```
 
+### Go
+```bash
+# Download from https://golang.org/dl/
+wget https://go.dev/dl/go$(version).linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go$(version).linux-amd64.tar.gz
+echo 'export PATH="/usr/local/go/bin:$PATH"' >> ~/.bashrc
+```
+
 ### Flutter
 ```bash
 # Download from https://flutter.dev/docs/get-started/install/linux
@@ -74,6 +130,27 @@ wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/
 tar -xf flutter_linux_$(version)-stable.tar.xz
 sudo mv flutter /opt/
 echo 'export PATH="/opt/flutter/bin:$PATH"' >> ~/.bashrc
+```
+
+### Docker
+```bash
+# Ubuntu/Debian
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+### Deno
+```bash
+curl -fsSL https://deno.land/install.sh | sh
+echo 'export PATH="$HOME/.deno/bin:$PATH"' >> ~/.bashrc
+```
+
+### Bun
+```bash
+curl -fsSL https://bun.sh/install | bash
+echo 'export PATH="$HOME/.bun/bin:$PATH"' >> ~/.bashrc
 ```
 
 ## PWA Development
@@ -113,13 +190,33 @@ Install system dependencies manually if the script fails:
 ```bash
 # Ubuntu/Debian
 sudo apt update
-sudo apt install curl wget git build-essential pkg-config libssl-dev
+sudo apt install curl wget git build-essential pkg-config libssl-dev \
+    jq htop tmux vim neovim postgresql-client sqlite3 redis-tools \
+    python3 python3-pip shellcheck
 
 # Fedora
-sudo dnf install curl wget git gcc gcc-c++ make pkgconfig openssl-devel
+sudo dnf install curl wget git gcc gcc-c++ make pkgconfig openssl-devel \
+    jq htop tmux vim neovim postgresql sqlite redis python3 python3-pip ShellCheck
 
 # Arch Linux
-sudo pacman -S curl wget git base-devel openssl
+sudo pacman -S curl wget git base-devel openssl jq htop tmux vim neovim \
+    postgresql sqlite redis python python-pip shellcheck
+```
+
+### Docker Permission Issues
+After installing Docker, add your user to the docker group:
+```bash
+sudo usermod -aG docker $USER
+# Log out and back in for changes to take effect
+```
+
+### Node.js/npm Issues
+If you encounter npm permission issues, you can fix them by changing npm's default directory:
+```bash
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ## Contributing

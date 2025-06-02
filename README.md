@@ -85,17 +85,22 @@ sudo apt install just rustc libglvnd-dev libwayland-dev libseat-dev libxkbcommon
 
 ### Development Tools Setup
 
-For developers working on COSMIC SVM applications, additional development tools can be installed:
+For developers working on COSMIC SVM applications, a comprehensive suite of development tools can be installed:
 
 ```
 just dev-tools
 ```
 
-This will install:
-- **Programming Languages**: Zig (latest), Crystal (latest)
+This will install over 30 development tools including:
+- **Programming Languages**: Rust, Zig, Crystal, Go, Node.js, Python 3, Deno, Bun
 - **Mobile Development**: React Native CLI, Flutter, Kotlin, Android Studio
-- **Development Tools**: Insomnia API client
+- **Development Tools**: Visual Studio Code, Insomnia API client, GitHub CLI, fzf
+- **Container Tools**: Docker, Docker Compose
+- **Package Managers**: pnpm, yarn, Cargo
 - **Network Tools**: Tor, Tailscale, Yggdrasil, i2p
+- **System Tools**: jq, htop, tmux, ShellCheck, vim/neovim
+- **Database Tools**: PostgreSQL client, SQLite, Redis CLI
+- **Testing Tools**: ESLint, Prettier, Jest, Playwright, Cypress
 - **PWA Tools**: Angular CLI, Create React App, Lighthouse, Workbox
 - **Specialized Tools**: OSVM CLI, Anza CLI tools (placeholders for future implementation)
 
