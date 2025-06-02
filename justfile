@@ -68,6 +68,16 @@ sysext dir=(invocation_directory() / "cosmic-sysext") version=("nightly-" + `git
     EOF
     echo "Done"
 
+dev-tools:
+    #!/usr/bin/env bash
+    echo "Installing COSMIC SVM development tools..."
+    bash scripts/install-dev-tools.sh
+
+dev-tools-check:
+    #!/usr/bin/env bash
+    echo "Checking development tools installation..."
+    bash scripts/check-dev-tools.sh
+
 clean:
     rm -rf cosmic-sysext
     rm -rf cosmic-applets/target

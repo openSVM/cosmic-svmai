@@ -1,3 +1,10 @@
 .vscode
 cosmic-sysext
 *_build
+node_modules
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache
+.gradle
+.android
+*.log
