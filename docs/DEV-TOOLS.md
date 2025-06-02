@@ -24,6 +24,10 @@ just dev-tools-check
 - **Python 3 & pip**: High-level programming language and package installer
 - **Deno**: Secure runtime for JavaScript and TypeScript
 - **Bun**: Fast all-in-one JavaScript runtime
+- **Java (OpenJDK)**: Enterprise-grade programming language and platform
+- **Swift**: Programming language for iOS, macOS, and server-side development
+- **Haskell**: Advanced functional programming language
+- **Elixir**: Dynamic, functional language designed for maintainable and scalable applications
 
 ### Mobile Development
 
@@ -35,6 +39,9 @@ just dev-tools-check
 ### Development Tools
 
 - **Visual Studio Code**: Lightweight but powerful source code editor
+- **IntelliJ IDEA Community**: Professional IDE for Java and other JVM languages
+- **WebStorm**: JavaScript and Node.js IDE by JetBrains
+- **Emacs**: Extensible, customizable text editor and computing environment
 - **Cursor IDE**: AI-powered code editor with advanced autocomplete and chat features
 - **Zed IDE**: High-performance, multiplayer code editor focused on speed and collaboration
 - **Insomnia**: REST/GraphQL API client
@@ -81,6 +88,9 @@ just dev-tools-check
 - **PostgreSQL client**: Command line client for PostgreSQL
 - **SQLite**: Self-contained SQL database engine
 - **Redis CLI**: Command line interface for Redis
+- **MongoDB Compass**: GUI for MongoDB database management
+- **DBeaver Community**: Universal database tool for developers and database administrators
+- **pgAdmin4**: Web-based administration tool for PostgreSQL
 
 ### GPU Computing Tools
 
@@ -93,6 +103,60 @@ just dev-tools-check
 - **llama.cpp**: Efficient inference of LLaMA models in C++
 - **PyTorch**: Deep learning framework (via pip)
 - **Transformers**: State-of-the-art ML library (via pip)
+
+### Security Tools
+
+- **Wireshark**: Network protocol analyzer and packet capture tool
+- **Nmap**: Network discovery and security auditing utility
+- **OWASP ZAP**: Web application security scanner
+- **Burp Suite Community**: Web vulnerability scanner and proxy tool
+
+### Performance and Text Processing Tools
+
+- **Valgrind**: Memory debugging and profiling tool
+- **ripgrep (rg)**: Fast text search tool, grep alternative
+- **fd**: Simple, fast, and user-friendly alternative to find
+- **bat**: Cat clone with syntax highlighting and Git integration
+- **exa**: Modern replacement for ls with additional features
+
+### Cloud CLI Tools
+
+- **AWS CLI**: Command line interface for Amazon Web Services
+- **Azure CLI**: Command line interface for Microsoft Azure
+- **Google Cloud CLI**: Command line interface for Google Cloud Platform
+- **Terraform**: Infrastructure as code tool for cloud provisioning
+- **Pulumi**: Modern infrastructure as code platform
+
+### Terminal Enhancements
+
+- **Zsh**: Advanced shell with powerful features
+- **Oh My Zsh**: Framework for managing Zsh configuration
+- **Starship**: Cross-shell prompt with customizable styling
+
+### API Testing Tools
+
+- **Postman**: Comprehensive API development and testing platform
+- **HTTPie**: Command line HTTP client with intuitive syntax
+- **curlie**: Frontend to curl that adds ease of use of httpie
+
+### Build Tools
+
+- **CMake**: Cross-platform build system generator
+- **Meson**: Fast and user-friendly build system
+- **Bazel**: Build tool for large-scale software development
+
+### Documentation Tools
+
+- **MkDocs**: Static site generator for project documentation
+- **Sphinx**: Documentation generator with extensive customization
+- **Pandoc**: Universal document converter
+
+### File Sync and Remote Tools
+
+- **Syncthing**: Continuous file synchronization program
+- **rclone**: Command line program to manage files on cloud storage
+- **Ansible**: IT automation platform for configuration management
+- **SSH tools**: Secure shell client and utilities
 
 ### Specialized Browsers
 

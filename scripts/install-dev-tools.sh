@@ -687,6 +687,478 @@ install_ai_ml_tools() {
     fi
 }
 
+# Install additional programming languages
+install_additional_languages() {
+    echo_info "Installing additional programming languages..."
+    
+    # Install Java (OpenJDK)
+    if ! command -v java &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y openjdk-17-jdk openjdk-17-jre
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm jdk17-openjdk
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y java-17-openjdk java-17-openjdk-devel
+        fi
+        echo_info "Java OpenJDK installed"
+    else
+        echo_info "Java already installed: $(java -version 2>&1 | head -1)"
+    fi
+    
+    # Install Swift (if on Ubuntu)
+    if ! command -v swift &> /dev/null && command -v apt-get &> /dev/null; then
+        # Add Swift repository and install
+        wget -O - https://swift.org/keys/all-keys.asc | sudo gpg --import -
+        echo "deb [signed-by=/usr/share/keyrings/swift-archive-keyring.gpg] https://download.swift.org/ubuntu$(lsb_release -rs)/swift-5.9-release $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/swift.list
+        sudo apt-get update
+        sudo apt-get install -y swift-lang || echo_warn "Swift installation failed - manual installation may be required"
+    fi
+    
+    # Install Haskell
+    if ! command -v ghc &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y haskell-platform
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm ghc cabal-install stack
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y ghc cabal-install stack
+        fi
+        echo_info "Haskell installed"
+    else
+        echo_info "Haskell already installed: $(ghc --version)"
+    fi
+    
+    # Install Elixir
+    if ! command -v elixir &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y elixir
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm elixir
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y elixir
+        fi
+        echo_info "Elixir installed"
+    else
+        echo_info "Elixir already installed: $(elixir --version | head -1)"
+    fi
+}
+
+# Install additional IDEs and editors
+install_additional_ides() {
+    echo_info "Installing additional IDEs and editors..."
+    
+    # Install IntelliJ IDEA Community
+    if command -v snap &> /dev/null; then
+        if ! snap list intellij-idea-community &> /dev/null; then
+            sudo snap install intellij-idea-community --classic
+            echo_info "IntelliJ IDEA Community installed"
+        fi
+    fi
+    
+    # Install WebStorm (trial/commercial)
+    if command -v snap &> /dev/null; then
+        if ! snap list webstorm &> /dev/null; then
+            sudo snap install webstorm --classic || echo_warn "WebStorm installation failed - requires JetBrains account"
+        fi
+    fi
+    
+    # Install Emacs
+    if ! command -v emacs &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y emacs
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm emacs
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y emacs
+        fi
+        echo_info "Emacs installed"
+    else
+        echo_info "Emacs already installed: $(emacs --version | head -1)"
+    fi
+}
+
+# Install database management tools
+install_database_tools() {
+    echo_info "Installing database management tools..."
+    
+    # Install MongoDB Compass
+    if command -v apt-get &> /dev/null; then
+        if ! command -v mongodb-compass &> /dev/null; then
+            wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | sudo apt-key add -
+            echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+            sudo apt-get update
+            sudo apt-get install -y mongodb-compass || echo_warn "MongoDB Compass installation failed"
+        fi
+    fi
+    
+    # Install DBeaver Community
+    if command -v snap &> /dev/null; then
+        if ! snap list dbeaver-ce &> /dev/null; then
+            sudo snap install dbeaver-ce
+            echo_info "DBeaver Community installed"
+        fi
+    elif command -v flatpak &> /dev/null; then
+        flatpak install -y flathub io.dbeaver.DBeaverCommunity
+    fi
+    
+    # Install pgAdmin4
+    if command -v apt-get &> /dev/null; then
+        curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo apt-key add -
+        echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
+        sudo apt-get update
+        sudo apt-get install -y pgadmin4-desktop || echo_warn "pgAdmin4 installation failed"
+    fi
+}
+
+# Install security and networking tools
+install_security_tools() {
+    echo_info "Installing security and networking tools..."
+    
+    # Install Wireshark
+    if ! command -v wireshark &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y wireshark
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm wireshark-qt
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y wireshark
+        fi
+        echo_info "Wireshark installed"
+    fi
+    
+    # Install Nmap
+    if ! command -v nmap &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y nmap
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm nmap
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y nmap
+        fi
+        echo_info "Nmap installed"
+    fi
+    
+    # Install OWASP ZAP
+    if command -v snap &> /dev/null; then
+        if ! snap list zaproxy &> /dev/null; then
+            sudo snap install zaproxy --classic
+            echo_info "OWASP ZAP installed"
+        fi
+    fi
+    
+    # Install Burp Suite Community
+    if command -v apt-get &> /dev/null; then
+        if [ ! -f /opt/BurpSuiteCommunity/BurpSuiteCommunity ]; then
+            cd /tmp
+            wget -O burpsuite.sh "https://portswigger.net/burp/releases/download?product=community&type=Linux"
+            chmod +x burpsuite.sh
+            sudo ./burpsuite.sh -q -dir /opt/BurpSuiteCommunity || echo_warn "Burp Suite installation may require manual intervention"
+        fi
+    fi
+}
+
+# Install performance and text processing tools
+install_performance_tools() {
+    echo_info "Installing performance and text processing tools..."
+    
+    # Install Valgrind
+    if ! command -v valgrind &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y valgrind
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm valgrind
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y valgrind
+        fi
+        echo_info "Valgrind installed"
+    fi
+    
+    # Install ripgrep (rg)
+    if ! command -v rg &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y ripgrep
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm ripgrep
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y ripgrep
+        fi
+        echo_info "ripgrep installed"
+    fi
+    
+    # Install fd (find alternative)
+    if ! command -v fd &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y fd-find
+            sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm fd
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y fd-find
+        fi
+        echo_info "fd installed"
+    fi
+    
+    # Install bat (cat alternative)
+    if ! command -v bat &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y bat
+            sudo ln -sf /usr/bin/batcat /usr/local/bin/bat
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm bat
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y bat
+        fi
+        echo_info "bat installed"
+    fi
+    
+    # Install exa (ls alternative)
+    if ! command -v exa &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y exa
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm exa
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y exa
+        fi
+        echo_info "exa installed"
+    fi
+}
+
+# Install cloud CLI tools
+install_cloud_tools() {
+    echo_info "Installing cloud CLI tools..."
+    
+    # Install AWS CLI v2
+    if ! command -v aws &> /dev/null; then
+        cd /tmp
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip -q awscliv2.zip
+        sudo ./aws/install
+        echo_info "AWS CLI v2 installed"
+    fi
+    
+    # Install Azure CLI
+    if ! command -v az &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm azure-cli
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y azure-cli
+        fi
+        echo_info "Azure CLI installed"
+    fi
+    
+    # Install Google Cloud CLI
+    if ! command -v gcloud &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+            sudo apt-get update
+            sudo apt-get install -y google-cloud-cli
+        fi
+        echo_info "Google Cloud CLI installed"
+    fi
+    
+    # Install Terraform
+    if ! command -v terraform &> /dev/null; then
+        cd /tmp
+        TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep '"tag_name"' | cut -d'"' -f4 | cut -c2-)
+        wget "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+        unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+        sudo mv terraform /usr/local/bin/
+        echo_info "Terraform installed"
+    fi
+    
+    # Install Pulumi
+    if ! command -v pulumi &> /dev/null; then
+        curl -fsSL https://get.pulumi.com | sh
+        if ! grep -q 'export PATH="$HOME/.pulumi/bin:$PATH"' "$HOME/.bashrc"; then
+            echo 'export PATH="$HOME/.pulumi/bin:$PATH"' >> "$HOME/.bashrc"
+        fi
+        echo_info "Pulumi installed"
+    fi
+}
+
+# Install terminal enhancements
+install_terminal_enhancements() {
+    echo_info "Installing terminal enhancements..."
+    
+    # Install Zsh if not already installed
+    if ! command -v zsh &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y zsh
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm zsh
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y zsh
+        fi
+    fi
+    
+    # Install Oh My Zsh
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+        echo_info "Oh My Zsh installed"
+    fi
+    
+    # Install Starship prompt
+    if ! command -v starship &> /dev/null; then
+        curl -sS https://starship.rs/install.sh | sh -s -- -y
+        
+        # Add to bashrc and zshrc
+        if ! grep -q 'eval "$(starship init bash)"' "$HOME/.bashrc" 2>/dev/null; then
+            echo 'eval "$(starship init bash)"' >> "$HOME/.bashrc"
+        fi
+        
+        if [ -f "$HOME/.zshrc" ] && ! grep -q 'eval "$(starship init zsh)"' "$HOME/.zshrc"; then
+            echo 'eval "$(starship init zsh)"' >> "$HOME/.zshrc"
+        fi
+        
+        echo_info "Starship prompt installed"
+    fi
+}
+
+# Install API testing tools
+install_api_tools() {
+    echo_info "Installing API testing tools..."
+    
+    # Install Postman
+    if command -v snap &> /dev/null; then
+        if ! snap list postman &> /dev/null; then
+            sudo snap install postman
+            echo_info "Postman installed"
+        fi
+    fi
+    
+    # Install HTTPie
+    if ! command -v http &> /dev/null; then
+        if command -v pip3 &> /dev/null; then
+            pip3 install --user httpie
+            echo_info "HTTPie installed"
+        fi
+    fi
+    
+    # Install curl alternatives
+    if ! command -v curlie &> /dev/null; then
+        if command -v snap &> /dev/null; then
+            sudo snap install curlie
+        fi
+    fi
+}
+
+# Install build tools
+install_build_tools() {
+    echo_info "Installing build tools..."
+    
+    # Install CMake
+    if ! command -v cmake &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y cmake
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm cmake
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y cmake
+        fi
+        echo_info "CMake installed"
+    fi
+    
+    # Install Meson
+    if ! command -v meson &> /dev/null; then
+        if command -v pip3 &> /dev/null; then
+            pip3 install --user meson ninja
+            echo_info "Meson and Ninja installed"
+        fi
+    fi
+    
+    # Install Bazel
+    if ! command -v bazel &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+            sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+            echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+            sudo apt-get update
+            sudo apt-get install -y bazel
+            echo_info "Bazel installed"
+        fi
+    fi
+}
+
+# Install documentation tools
+install_documentation_tools() {
+    echo_info "Installing documentation tools..."
+    
+    # Install MkDocs
+    if ! command -v mkdocs &> /dev/null; then
+        if command -v pip3 &> /dev/null; then
+            pip3 install --user mkdocs mkdocs-material
+            echo_info "MkDocs installed"
+        fi
+    fi
+    
+    # Install Sphinx
+    if command -v pip3 &> /dev/null; then
+        pip3 install --user sphinx sphinx-rtd-theme
+        echo_info "Sphinx installed"
+    fi
+    
+    # Install Pandoc
+    if ! command -v pandoc &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y pandoc
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm pandoc
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y pandoc
+        fi
+        echo_info "Pandoc installed"
+    fi
+}
+
+# Install file sync and remote tools
+install_remote_tools() {
+    echo_info "Installing file sync and remote tools..."
+    
+    # Install Syncthing
+    if ! command -v syncthing &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            curl -s https://syncthing.net/release-key.txt | sudo apt-key add -
+            echo "deb https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
+            sudo apt-get update
+            sudo apt-get install -y syncthing
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm syncthing
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y syncthing
+        fi
+        echo_info "Syncthing installed"
+    fi
+    
+    # Install rclone
+    if ! command -v rclone &> /dev/null; then
+        curl https://rclone.org/install.sh | sudo bash
+        echo_info "rclone installed"
+    fi
+    
+    # Install Ansible
+    if ! command -v ansible &> /dev/null; then
+        if command -v pip3 &> /dev/null; then
+            pip3 install --user ansible
+            echo_info "Ansible installed"
+        fi
+    fi
+    
+    # Install SSH tools
+    if ! command -v ssh-copy-id &> /dev/null; then
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -y openssh-client
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm openssh
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y openssh-clients
+        fi
+    fi
+}
+
 # Update PATH
 update_path() {
     echo_info "Updating PATH..."
@@ -700,6 +1172,8 @@ update_path() {
         '$HOME/.deno/bin'
         '$HOME/.bun/bin'
         '$HOME/.local/llama.cpp'
+        '$HOME/.pulumi/bin'
+        '/opt/BurpSuiteCommunity'
     )
     
     for path in "${PATHS_TO_ADD[@]}"; do
@@ -732,6 +1206,7 @@ main() {
     install_go
     install_deno
     install_bun
+    install_additional_languages
     
     echo_info "Installing mobile development tools..."
     install_react_native
@@ -748,6 +1223,7 @@ main() {
     echo_info "Installing advanced IDEs..."
     install_cursor
     install_zed
+    install_additional_ides
     
     echo_info "Installing container tools..."
     install_docker
@@ -775,6 +1251,33 @@ main() {
     echo_info "Installing AI/ML tools..."
     install_ollama
     install_ai_ml_tools
+    
+    echo_info "Installing database tools..."
+    install_database_tools
+    
+    echo_info "Installing security tools..."
+    install_security_tools
+    
+    echo_info "Installing performance tools..."
+    install_performance_tools
+    
+    echo_info "Installing cloud CLI tools..."
+    install_cloud_tools
+    
+    echo_info "Installing terminal enhancements..."
+    install_terminal_enhancements
+    
+    echo_info "Installing API testing tools..."
+    install_api_tools
+    
+    echo_info "Installing build tools..."
+    install_build_tools
+    
+    echo_info "Installing documentation tools..."
+    install_documentation_tools
+    
+    echo_info "Installing file sync and remote tools..."
+    install_remote_tools
     
     echo_info "Installing specialized browsers..."
     install_nyxt

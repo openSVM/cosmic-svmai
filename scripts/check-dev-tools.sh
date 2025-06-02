@@ -99,6 +99,10 @@ check_command "python3" "Python 3"
 check_command "pip3" "pip3"
 check_command "deno" "Deno"
 check_command "bun" "Bun"
+check_command "java" "Java (OpenJDK)"
+check_command "swift" "Swift"
+check_command "ghc" "Haskell (GHC)"
+check_command "elixir" "Elixir"
 
 # Mobile Development
 echo ""
@@ -136,6 +140,23 @@ elif check_command "code" "Visual Studio Code"; then
 else
     echo_fail "Visual Studio Code not found"
 fi
+
+# Check IntelliJ IDEA
+if check_snap "intellij-idea-community" "IntelliJ IDEA Community"; then
+    :
+else
+    echo_fail "IntelliJ IDEA Community not found"
+fi
+
+# Check WebStorm
+if check_snap "webstorm" "WebStorm"; then
+    :
+else
+    echo_fail "WebStorm not found"
+fi
+
+# Check Emacs
+check_command "emacs" "Emacs"
 
 # Check Cursor IDE
 check_command "cursor" "Cursor IDE"
@@ -222,6 +243,15 @@ echo "Database Tools:"
 check_command "psql" "PostgreSQL client"
 check_command "sqlite3" "SQLite"
 check_command "redis-cli" "Redis CLI"
+check_command "mongodb-compass" "MongoDB Compass"
+if check_snap "dbeaver-ce" "DBeaver Community"; then
+    :
+elif check_flatpak "io.dbeaver.DBeaverCommunity" "DBeaver Community"; then
+    :
+else
+    echo_fail "DBeaver Community not found"
+fi
+check_command "pgadmin4" "pgAdmin4"
 
 # GPU Computing Tools
 echo ""
@@ -234,6 +264,80 @@ echo ""
 echo "AI/ML Tools:"
 check_command "ollama" "Ollama (Local LLM runner)"
 check_path "$HOME/.local/llama.cpp/main" "llama.cpp"
+
+# Security Tools
+echo ""
+echo "Security Tools:"
+check_command "wireshark" "Wireshark"
+check_command "nmap" "Nmap"
+if check_snap "zaproxy" "OWASP ZAP"; then
+    :
+else
+    echo_fail "OWASP ZAP not found"
+fi
+check_path "/opt/BurpSuiteCommunity/BurpSuiteCommunity" "Burp Suite Community"
+
+# Performance and Text Processing Tools
+echo ""
+echo "Performance and Text Processing Tools:"
+check_command "valgrind" "Valgrind"
+check_command "rg" "ripgrep"
+check_command "fd" "fd (find alternative)"
+check_command "bat" "bat (cat alternative)"
+check_command "exa" "exa (ls alternative)"
+
+# Cloud CLI Tools
+echo ""
+echo "Cloud CLI Tools:"
+check_command "aws" "AWS CLI"
+check_command "az" "Azure CLI"
+check_command "gcloud" "Google Cloud CLI"
+check_command "terraform" "Terraform"
+check_command "pulumi" "Pulumi"
+
+# Terminal Enhancements
+echo ""
+echo "Terminal Enhancements:"
+check_command "zsh" "Zsh"
+check_path "$HOME/.oh-my-zsh" "Oh My Zsh"
+check_command "starship" "Starship prompt"
+
+# API Testing Tools
+echo ""
+echo "API Testing Tools:"
+if check_snap "postman" "Postman"; then
+    :
+else
+    echo_fail "Postman not found"
+fi
+check_command "http" "HTTPie"
+if check_snap "curlie" "curlie"; then
+    :
+else
+    echo_fail "curlie not found"
+fi
+
+# Build Tools
+echo ""
+echo "Build Tools:"
+check_command "cmake" "CMake"
+check_command "meson" "Meson"
+check_command "bazel" "Bazel"
+
+# Documentation Tools
+echo ""
+echo "Documentation Tools:"
+check_command "mkdocs" "MkDocs"
+check_command "sphinx-build" "Sphinx"
+check_command "pandoc" "Pandoc"
+
+# File Sync and Remote Tools
+echo ""
+echo "File Sync and Remote Tools:"
+check_command "syncthing" "Syncthing"
+check_command "rclone" "rclone"
+check_command "ansible" "Ansible"
+check_command "ssh-copy-id" "SSH tools"
 
 # Browsers
 echo ""

@@ -91,17 +91,24 @@ For developers working on COSMIC SVM applications, a comprehensive suite of deve
 just dev-tools
 ```
 
-This will install over 40 development tools including:
-- **Programming Languages**: Rust, Zig, Crystal, Go, Node.js, Python 3, Deno, Bun
+This will install over 70 development tools including:
+- **Programming Languages**: Rust, Zig, Crystal, Go, Node.js, Python 3, Deno, Bun, Java, Swift, Haskell, Elixir
 - **Mobile Development**: React Native CLI, Flutter, Kotlin, Android Studio
-- **Development Tools**: Visual Studio Code, Cursor IDE, Zed IDE, Insomnia API client, GitHub CLI, fzf
+- **Development Tools**: Visual Studio Code, IntelliJ IDEA, WebStorm, Emacs, Cursor IDE, Zed IDE, Insomnia API client, GitHub CLI, fzf
 - **Container & Kubernetes**: Docker, Docker Compose, k3s, kubectl, k9s, Helm, Lens
 - **Package Managers**: pnpm, yarn, Cargo, Nix
 - **Network Tools**: Tor, Tailscale, Yggdrasil, i2p
 - **GPU Computing**: CUDA Toolkit, nvidia-smi
 - **AI/ML Tools**: Ollama (local LLMs), llama.cpp, PyTorch, Transformers
-- **System Tools**: jq, htop, tmux, ShellCheck, vim/neovim
-- **Database Tools**: PostgreSQL client, SQLite, Redis CLI
+- **System Tools**: jq, htop, tmux, ShellCheck, vim/neovim, ripgrep, fd, bat, exa
+- **Database Tools**: PostgreSQL client, SQLite, Redis CLI, MongoDB Compass, DBeaver, pgAdmin4
+- **Security Tools**: Wireshark, Nmap, OWASP ZAP, Burp Suite Community
+- **Cloud CLI**: AWS CLI, Azure CLI, Google Cloud CLI, Terraform, Pulumi
+- **Terminal Enhancements**: Zsh, Oh My Zsh, Starship prompt
+- **API Testing**: Postman, HTTPie, curlie
+- **Build Tools**: CMake, Meson, Bazel
+- **Documentation**: MkDocs, Sphinx, Pandoc
+- **File Sync**: Syncthing, rclone, Ansible
 - **Testing Tools**: ESLint, Prettier, Jest, Playwright, Cypress
 - **PWA Tools**: Angular CLI, Create React App, Lighthouse, Workbox
 - **Specialized Browsers**: Nyxt Browser (programmable browser)
