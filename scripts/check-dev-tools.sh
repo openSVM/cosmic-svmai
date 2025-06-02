@@ -4,6 +4,7 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 echo_pass() {
@@ -18,17 +19,105 @@ echo_warn() {
     echo -e "${YELLOW}[WARN]${NC} $1"
 }
 
+echo_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+# Counters
+TOTAL_TOOLS=0
+INSTALLED_TOOLS=0
+MISSING_TOOLS=0
+
 # Check if a command exists
 check_command() {
     local cmd="$1"
     local name="$2"
     
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
     if command -v "$cmd" &> /dev/null; then
         local version=$($cmd --version 2>/dev/null | head -n1 || echo "version unknown")
         echo_pass "$name is installed: $version"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
         return 0
     else
         echo_fail "$name is not installed"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
+        return 1
+    fi
+}
+
+# Check if a Python package is installed
+check_python_package() {
+    local package="$1"
+    local name="$2"
+    
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
+    if pip show "$package" &> /dev/null; then
+        local version=$(pip show "$package" | grep Version | cut -d' ' -f2)
+        echo_pass "$name (Python) is installed: $version"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
+        return 0
+    else
+        echo_fail "$name (Python) is not installed"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
+        return 1
+    fi
+}
+
+# Check if an npm package is installed globally
+check_npm_package() {
+    local package="$1"
+    local name="$2"
+    
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
+    if npm list -g "$package" &> /dev/null; then
+        local version=$(npm list -g "$package" 2>/dev/null | grep "$package" | head -n1 | cut -d'@' -f2 || echo "version unknown")
+        echo_pass "$name (npm) is installed: $version"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
+        return 0
+    else
+        echo_fail "$name (npm) is not installed"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
+        return 1
+    fi
+}
+
+# Check if a gem is installed
+check_gem() {
+    local gem="$1"
+    local name="$2"
+    
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
+    if gem list "$gem" | grep -q "$gem"; then
+        local version=$(gem list "$gem" | grep "$gem" | head -n1 | cut -d'(' -f2 | cut -d')' -f1)
+        echo_pass "$name (gem) is installed: $version"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
+        return 0
+    else
+        echo_fail "$name (gem) is not installed"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
+        return 1
+    fi
+}
+
+# Check if a cargo package is installed
+check_cargo() {
+    local package="$1"
+    local name="$2"
+    
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
+    if cargo install --list | grep -q "^$package"; then
+        echo_pass "$name (cargo) is installed"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
+        return 0
+    else
+        echo_fail "$name (cargo) is not installed"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
         return 1
     fi
 }
@@ -38,16 +127,541 @@ check_path() {
     local path="$1"
     local name="$2"
     
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
     if [ -e "$path" ]; then
         echo_pass "$name is installed at $path"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
         return 0
     else
         echo_fail "$name is not found at $path"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
         return 1
     fi
 }
 
 # Check Snap packages
+check_snap() {
+    local package="$1"
+    local name="$2"
+    
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
+    if command -v snap &> /dev/null && snap list "$package" &> /dev/null; then
+        local version=$(snap list "$package" | tail -n +2 | awk '{print $2}')
+        echo_pass "$name (snap) is installed: $version"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
+        return 0
+    else
+        echo_fail "$name (snap) is not installed"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
+        return 1
+    fi
+}
+
+# Check Flatpak packages
+check_flatpak() {
+    local package="$1"
+    local name="$2"
+    
+    TOTAL_TOOLS=$((TOTAL_TOOLS + 1))
+    
+    if command -v flatpak &> /dev/null && flatpak list | grep -q "$package"; then
+        echo_pass "$name (flatpak) is installed"
+        INSTALLED_TOOLS=$((INSTALLED_TOOLS + 1))
+        return 0
+    else
+        echo_fail "$name (flatpak) is not installed"
+        MISSING_TOOLS=$((MISSING_TOOLS + 1))
+        return 1
+    fi
+}
+
+echo_info "=== COSMIC SVM Development Tools Check ==="
+echo_info "Checking installation status of comprehensive development tools collection..."
+echo ""
+
+# Programming Languages and Runtimes
+echo_info "=== Programming Languages and Runtimes ==="
+check_command "zig" "Zig"
+check_command "crystal" "Crystal"
+check_command "rust" "Rust (rustc)"
+check_command "cargo" "Cargo"
+check_command "go" "Go"
+check_command "node" "Node.js"
+check_command "deno" "Deno"
+check_command "bun" "Bun"
+check_command "python3" "Python 3"
+check_command "java" "Java"
+check_command "kotlin" "Kotlin"
+check_command "swift" "Swift"
+check_command "julia" "Julia"
+check_command "ruby" "Ruby"
+check_command "php" "PHP"
+check_command "dotnet" "Microsoft .NET"
+echo ""
+
+# Package Managers and Build Tools
+echo_info "=== Package Managers and Build Tools ==="
+check_command "npm" "npm"
+check_command "pnpm" "pnpm"
+check_command "yarn" "Yarn"
+check_command "pip" "pip"
+check_command "poetry" "Poetry"
+check_command "pipenv" "Pipenv"
+check_command "conda" "Conda"
+check_command "mamba" "Mamba"
+check_command "rustup" "Rustup"
+check_command "mvn" "Maven"
+check_command "gradle" "Gradle"
+check_command "bazel" "Bazel"
+check_command "cmake" "CMake"
+check_command "make" "Make"
+check_command "ninja" "Ninja"
+check_command "just" "Just"
+echo ""
+
+# Modern Web Frameworks and Build Tools
+echo_info "=== Modern Web Frameworks and Build Tools ==="
+check_npm_package "vite" "Vite"
+check_command "tauri" "Tauri"
+check_npm_package "@sveltejs/kit" "SvelteKit"
+check_npm_package "@builder.io/qwik" "Qwik"
+check_npm_package "solid-js" "Solid.js"
+check_npm_package "astro" "Astro"
+check_npm_package "@remix-run/dev" "Remix"
+check_command "fresh" "Fresh"
+check_command "esbuild" "esbuild"
+check_npm_package "@swc/cli" "SWC"
+check_command "turbo" "Turbo"
+check_command "nx" "Nx"
+check_command "lerna" "Lerna"
+check_npm_package "vitest" "Vitest"
+echo ""
+
+# Modern Code Editors and IDEs
+echo_info "=== Modern Code Editors and IDEs ==="
+check_command "code" "Visual Studio Code"
+check_command "codium" "VSCodium"
+check_command "cursor" "Cursor IDE"
+check_command "zed" "Zed"
+check_command "hx" "Helix"
+check_command "nvim" "Neovim"
+check_command "vim" "Vim"
+check_command "emacs" "Emacs"
+check_command "subl" "Sublime Text"
+check_command "atom" "Atom"
+check_command "pulsar" "Pulsar"
+echo ""
+
+# Containers and Virtualization
+echo_info "=== Containers and Virtualization ==="
+check_command "docker" "Docker"
+check_command "podman" "Podman"
+check_command "buildah" "Buildah"
+check_command "skopeo" "Skopeo"
+check_command "nerdctl" "nerdctl"
+check_command "containerd" "containerd"
+check_command "runc" "runc"
+check_command "crun" "crun"
+check_command "kaniko" "Kaniko"
+check_command "dive" "Dive"
+check_command "lazydocker" "Lazydocker"
+echo ""
+
+# Kubernetes and Cloud-Native Tools
+echo_info "=== Kubernetes and Cloud-Native Tools ==="
+check_command "kubectl" "kubectl"
+check_command "k3s" "k3s"
+check_command "k9s" "k9s"
+check_command "helm" "Helm"
+check_command "lens" "Lens"
+check_command "istioctl" "Istio"
+check_command "linkerd" "Linkerd"
+check_command "argocd" "Argo CD"
+check_command "flux" "Flux"
+check_command "kn" "Knative CLI"
+check_command "tkn" "Tekton CLI"
+echo ""
+
+# DevOps and Infrastructure Tools
+echo_info "=== DevOps and Infrastructure Tools ==="
+check_command "terraform" "Terraform"
+check_command "tofu" "OpenTofu"
+check_command "pulumi" "Pulumi"
+check_command "ansible" "Ansible"
+check_command "vagrant" "Vagrant"
+check_command "packer" "Packer"
+check_command "crossplane" "Crossplane"
+check_command "skaffold" "Skaffold"
+check_command "tilt" "Tilt"
+check_command "garden" "Garden"
+check_command "earthly" "Earthly"
+check_command "dagger" "Dagger"
+echo ""
+
+# Monitoring and Observability
+echo_info "=== Monitoring and Observability Tools ==="
+check_command "prometheus" "Prometheus"
+check_command "promtool" "Prometheus Tool"
+check_command "alertmanager" "Alertmanager"
+check_command "grafana-cli" "Grafana CLI"
+check_command "loki" "Loki"
+check_command "promtail" "Promtail"
+check_command "vector" "Vector"
+check_command "otelcol" "OpenTelemetry Collector"
+check_command "jaeger" "Jaeger"
+check_command "k6" "K6"
+check_command "artillery" "Artillery"
+echo ""
+
+# Database Tools
+echo_info "=== Database Tools ==="
+check_command "surreal" "SurrealDB"
+check_command "edgedb" "EdgeDB"
+check_npm_package "fauna-shell" "FaunaDB CLI"
+check_command "pscale" "PlanetScale CLI"
+check_command "supabase" "Supabase CLI"
+check_npm_package "prisma" "Prisma"
+check_command "atlas" "Atlas"
+check_command "cockroach" "CockroachDB"
+check_command "influx" "InfluxDB CLI"
+check_command "redis-server" "Redis"
+check_command "duckdb" "DuckDB"
+echo ""
+
+# AI/ML and Data Science Tools
+echo_info "=== AI/ML and Data Science Tools ==="
+check_python_package "langchain-cli" "LangChain CLI"
+check_python_package "chromadb" "ChromaDB"
+check_python_package "huggingface-hub" "Hugging Face Hub"
+check_python_package "wandb" "Weights & Biases"
+check_python_package "mlflow" "MLflow"
+check_python_package "dvc" "DVC"
+check_python_package "clearml" "ClearML"
+check_python_package "prefect" "Prefect"
+check_python_package "dagster" "Dagster"
+check_python_package "ray" "Ray"
+check_python_package "tensorflow" "TensorFlow"
+check_python_package "torch" "PyTorch"
+check_python_package "numpy" "NumPy"
+check_python_package "pandas" "Pandas"
+check_python_package "scikit-learn" "Scikit-learn"
+check_python_package "matplotlib" "Matplotlib"
+check_python_package "jupyter" "Jupyter"
+echo ""
+
+# Security Tools
+echo_info "=== Security Tools ==="
+check_command "age" "Age"
+check_command "sops" "SOPS"
+check_command "trivy" "Trivy"
+check_command "grype" "Grype"
+check_command "syft" "Syft"
+check_command "cosign" "Cosign"
+check_command "gitleaks" "Gitleaks"
+check_command "trufflehog" "TruffleHog"
+check_python_package "semgrep" "Semgrep"
+check_command "vault" "Vault"
+check_command "op" "1Password CLI"
+check_npm_package "@bitwarden/cli" "Bitwarden CLI"
+echo ""
+
+# Git and Version Control
+echo_info "=== Git and Version Control Tools ==="
+check_command "git" "Git"
+check_command "gh" "GitHub CLI"
+check_command "glab" "GitLab CLI"
+check_command "tea" "Gitea CLI"
+check_command "git-lfs" "Git LFS"
+check_command "delta" "Git Delta"
+check_command "git-cliff" "Git Cliff"
+check_npm_package "@commitlint/cli" "Commitlint"
+check_npm_package "commitizen" "Commitizen"
+check_npm_package "husky" "Husky"
+check_python_package "pre-commit" "Pre-commit"
+echo ""
+
+# API Development Tools
+echo_info "=== API Development Tools ==="
+check_npm_package "@hoppscotch/cli" "Hoppscotch CLI"
+check_npm_package "@usebruno/cli" "Bruno CLI"
+check_python_package "httpie" "HTTPie"
+check_command "curlie" "Curlie"
+check_command "xh" "XH"
+check_npm_package "@openapitools/openapi-generator-cli" "OpenAPI Generator"
+check_command "newman" "Newman"
+check_command "graphql" "GraphQL CLI"
+check_command "hasura" "Hasura CLI"
+check_npm_package "json-server" "JSON Server"
+echo ""
+
+# Testing Tools
+echo_info "=== Testing Tools ==="
+check_npm_package "@playwright/test" "Playwright"
+check_npm_package "cypress" "Cypress"
+check_npm_package "@wdio/cli" "WebDriver.io"
+check_npm_package "testcafe" "TestCafe"
+check_npm_package "puppeteer" "Puppeteer"
+check_npm_package "vitest" "Vitest"
+check_npm_package "jest" "Jest"
+check_npm_package "mocha" "Mocha"
+check_npm_package "@storybook/cli" "Storybook"
+check_npm_package "chromatic" "Chromatic"
+echo ""
+
+# Mobile Development Tools
+echo_info "=== Mobile Development Tools ==="
+check_npm_package "@expo/cli" "Expo CLI"
+check_npm_package "@ionic/cli" "Ionic CLI"
+check_npm_package "@capacitor/cli" "Capacitor CLI"
+check_npm_package "cordova" "Cordova CLI"
+check_npm_package "@nativescript/cli" "NativeScript CLI"
+check_npm_package "react-native-cli" "React Native CLI"
+check_command "flutter" "Flutter"
+check_command "fastlane" "Fastlane"
+check_npm_package "firebase-tools" "Firebase CLI"
+check_npm_package "@aws-amplify/cli" "AWS Amplify CLI"
+echo ""
+
+# Blockchain and Web3 Tools
+echo_info "=== Blockchain and Web3 Tools ==="
+check_command "forge" "Foundry/Forge"
+check_npm_package "hardhat" "Hardhat"
+check_command "truffle" "Truffle"
+check_command "ganache" "Ganache CLI"
+check_python_package "eth-brownie" "Brownie"
+check_command "solc" "Solidity Compiler"
+check_python_package "vyper" "Vyper"
+check_python_package "slither-analyzer" "Slither"
+check_command "ipfs" "IPFS"
+check_command "near" "NEAR CLI"
+check_command "solana" "Solana CLI"
+echo ""
+
+# Static Site Generators
+echo_info "=== Static Site Generators ==="
+check_command "hugo" "Hugo"
+check_command "jekyll" "Jekyll"
+check_npm_package "gatsby-cli" "Gatsby CLI"
+check_npm_package "create-next-app" "Next.js CLI"
+check_npm_package "create-nuxt-app" "Nuxt.js CLI"
+check_npm_package "@11ty/eleventy" "Eleventy"
+check_npm_package "gridsome" "Gridsome"
+echo ""
+
+# Documentation Tools
+echo_info "=== Documentation Tools ==="
+check_npm_package "@docusaurus/core" "Docusaurus"
+check_npm_package "vitepress" "VitePress"
+check_npm_package "docsify-cli" "Docsify"
+check_npm_package "@slidev/cli" "Slidev"
+check_npm_package "@marp-team/marp-cli" "Marp CLI"
+check_python_package "mkdocs" "MkDocs"
+check_python_package "sphinx" "Sphinx"
+check_command "pandoc" "Pandoc"
+check_npm_package "@mermaid-js/mermaid-cli" "Mermaid CLI"
+echo ""
+
+# Performance Tools
+echo_info "=== Performance Tools ==="
+check_npm_package "lighthouse" "Lighthouse"
+check_npm_package "psi" "PageSpeed Insights CLI"
+check_npm_package "webpack-bundle-analyzer" "Bundle Analyzer"
+check_command "hyperfine" "Hyperfine"
+check_command "valgrind" "Valgrind"
+check_command "perf" "Perf"
+check_command "bpftrace" "BPFTrace"
+check_python_package "py-spy" "Py-spy"
+echo ""
+
+# Terminal and Shell Tools
+echo_info "=== Terminal and Shell Tools ==="
+check_command "alacritty" "Alacritty"
+check_command "wezterm" "WezTerm"
+check_command "kitty" "Kitty"
+check_command "fish" "Fish Shell"
+check_command "nu" "Nushell"
+check_command "zsh" "Zsh"
+check_path "$HOME/.oh-my-zsh" "Oh My Zsh"
+check_command "starship" "Starship"
+check_command "bat" "Bat"
+check_command "exa" "Exa"
+check_command "eza" "Eza"
+check_command "lsd" "LSD"
+check_command "rg" "Ripgrep"
+check_command "fd" "Fd"
+check_command "procs" "Procs"
+check_command "btm" "Bottom"
+check_command "dust" "Dust"
+check_command "duf" "Duf"
+check_command "tokei" "Tokei"
+check_command "bandwhich" "Bandwhich"
+check_command "grex" "Grex"
+check_command "fzf" "Fzf"
+check_command "zoxide" "Zoxide"
+check_command "atuin" "Atuin"
+check_command "thefuck" "The Fuck"
+check_command "tldr" "TLDR"
+check_command "navi" "Navi"
+check_command "broot" "Broot"
+echo ""
+
+# Networking Tools
+echo_info "=== Networking Tools ==="
+check_command "warp-cli" "Cloudflare WARP"
+check_command "nebula" "Nebula"
+check_command "zerotier-cli" "ZeroTier"
+check_command "tailscale" "Tailscale"
+check_command "headscale" "Headscale"
+check_command "bore" "Bore"
+check_command "frpc" "FRP Client"
+check_command "cloudflared" "Cloudflared"
+check_command "ngrok" "Ngrok"
+check_command "step" "Step CLI"
+check_command "wg" "WireGuard"
+echo ""
+
+# Content Creation Tools
+echo_info "=== Content Creation Tools ==="
+check_command "obs" "OBS Studio"
+check_command "kdenlive" "Kdenlive"
+check_command "openshot-qt" "OpenShot"
+check_command "shotcut" "Shotcut"
+check_command "blender" "Blender"
+check_command "gimp" "GIMP"
+check_command "krita" "Krita"
+check_command "inkscape" "Inkscape"
+check_command "audacity" "Audacity"
+check_command "ffmpeg" "FFmpeg"
+check_command "convert" "ImageMagick"
+check_command "vlc" "VLC"
+check_command "mpv" "MPV"
+check_command "flameshot" "Flameshot"
+check_command "peek" "Peek"
+echo ""
+
+# Game Development Tools
+echo_info "=== Game Development Tools ==="
+check_command "unity-hub" "Unity Hub"
+check_command "godot" "Godot"
+check_command "love" "Love2D"
+check_python_package "pygame" "Pygame"
+check_python_package "arcade" "Arcade"
+check_command "processing" "Processing"
+check_npm_package "p5-manager" "p5.js Manager"
+check_command "tiled" "Tiled"
+check_command "ldtk" "LDTK"
+check_command "libresprite" "LibreSprite"
+check_command "pixelorama" "Pixelorama"
+echo ""
+
+# Embedded and IoT Tools
+echo_info "=== Embedded and IoT Tools ==="
+check_command "pio" "PlatformIO"
+check_command "arduino-cli" "Arduino CLI"
+check_command "arduino-ide" "Arduino IDE"
+check_command "idf.py" "ESP-IDF"
+check_command "west" "Zephyr West"
+check_command "mbed" "Mbed CLI"
+check_command "rpi-imager" "Raspberry Pi Imager"
+check_command "balena" "Balena CLI"
+check_command "balena-etcher" "Balena Etcher"
+check_python_package "esptool" "ESPTool"
+check_command "openocd" "OpenOCD"
+check_command "arm-none-eabi-gcc" "ARM GCC Toolchain"
+check_command "tinygo" "TinyGo"
+check_command "node-red" "Node-RED"
+check_command "mosquitto_pub" "Mosquitto MQTT"
+echo ""
+
+# Serverless Tools
+echo_info "=== Serverless Tools ==="
+check_npm_package "serverless" "Serverless Framework"
+check_command "sam" "AWS SAM CLI"
+check_npm_package "@architect/architect" "Architect"
+check_npm_package "azure-functions-core-tools" "Azure Functions CLI"
+check_command "faas-cli" "OpenFaaS CLI"
+check_command "fn" "Fn Project CLI"
+check_command "fission" "Fission CLI"
+check_npm_package "claudia" "Claudia.js"
+check_python_package "zappa" "Zappa"
+check_python_package "chalice" "Chalice"
+check_npm_package "@cloudflare/wrangler" "Cloudflare Workers CLI"
+echo ""
+
+# Cloud CLIs
+echo_info "=== Cloud Provider CLIs ==="
+check_command "aws" "AWS CLI"
+check_command "az" "Azure CLI"
+check_command "gcloud" "Google Cloud CLI"
+check_command "doctl" "DigitalOcean CLI"
+check_python_package "linode-cli" "Linode CLI"
+check_command "vultr-cli" "Vultr CLI"
+check_command "flyctl" "Fly.io CLI"
+check_npm_package "@railway/cli" "Railway CLI"
+check_command "render" "Render CLI"
+check_npm_package "netlify-cli" "Netlify CLI"
+check_npm_package "vercel" "Vercel CLI"
+check_command "heroku" "Heroku CLI"
+echo ""
+
+# Additional Modern Tools
+echo_info "=== Additional Modern Tools ==="
+check_command "wasmtime" "wasmtime"
+check_command "wasmer" "wasmer"
+check_command "wasm-pack" "wasm-pack"
+check_command "emcc" "Emscripten"
+check_command "temporal" "Temporal CLI"
+check_command "cadence" "Cadence CLI"
+check_python_package "dbt-core" "dbt"
+check_command "airbyte" "Airbyte CLI"
+check_python_package "singer-python" "Singer"
+check_python_package "meltano" "Meltano"
+check_command "benthos" "Benthos"
+check_command "polaris" "Polaris"
+check_python_package "checkov" "Checkov"
+check_command "terrascan" "Terrascan"
+check_command "tfsec" "tfsec"
+check_npm_package "snyk" "Snyk"
+check_command "kube-bench" "Kube-bench"
+check_python_package "qiskit" "Qiskit"
+check_python_package "cirq" "Cirq"
+check_python_package "pennylane" "PennyLane"
+check_npm_package "aframe-cli" "A-Frame CLI"
+check_npm_package "react-360-cli" "React 360 CLI"
+check_command "dapr" "Dapr CLI"
+check_npm_package "@nestjs/cli" "Nest.js CLI"
+check_npm_package "fastify-cli" "Fastify CLI"
+check_command "micro" "Micro Editor"
+check_command "zellij" "Zellij"
+check_command "yazi" "Yazi"
+check_command "sysbench" "Sysbench"
+check_command "mtr" "MTR"
+check_command "watchexec" "Watchexec"
+check_command "cht.sh" "Cheat.sh"
+echo ""
+
+# Summary
+echo_info "=== Summary ==="
+echo_info "Total tools checked: $TOTAL_TOOLS"
+echo_pass "Installed tools: $INSTALLED_TOOLS"
+echo_fail "Missing tools: $MISSING_TOOLS"
+
+if [ $MISSING_TOOLS -eq 0 ]; then
+    echo ""
+    echo_pass "🎉 All development tools are installed! You have a complete modern development environment."
+elif [ $INSTALLED_TOOLS -gt $((TOTAL_TOOLS / 2)) ]; then
+    echo ""
+    echo_warn "⚠️  Most tools are installed, but $MISSING_TOOLS tools are missing."
+    echo_info "Run 'just dev-tools' to install missing tools."
+else
+    echo ""
+    echo_fail "❌ Many tools are missing. Run 'just dev-tools' to install the complete development environment."
+fi
+
+echo ""
+echo_info "For installation instructions and troubleshooting, see docs/DEV-TOOLS.md"
 check_snap() {
     local package="$1"
     local name="$2"
