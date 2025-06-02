@@ -91,17 +91,20 @@ For developers working on COSMIC SVM applications, a comprehensive suite of deve
 just dev-tools
 ```
 
-This will install over 30 development tools including:
+This will install over 40 development tools including:
 - **Programming Languages**: Rust, Zig, Crystal, Go, Node.js, Python 3, Deno, Bun
 - **Mobile Development**: React Native CLI, Flutter, Kotlin, Android Studio
-- **Development Tools**: Visual Studio Code, Insomnia API client, GitHub CLI, fzf
-- **Container Tools**: Docker, Docker Compose
-- **Package Managers**: pnpm, yarn, Cargo
+- **Development Tools**: Visual Studio Code, Cursor IDE, Zed IDE, Insomnia API client, GitHub CLI, fzf
+- **Container & Kubernetes**: Docker, Docker Compose, k3s, kubectl, k9s, Helm, Lens
+- **Package Managers**: pnpm, yarn, Cargo, Nix
 - **Network Tools**: Tor, Tailscale, Yggdrasil, i2p
+- **GPU Computing**: CUDA Toolkit, nvidia-smi
+- **AI/ML Tools**: Ollama (local LLMs), llama.cpp, PyTorch, Transformers
 - **System Tools**: jq, htop, tmux, ShellCheck, vim/neovim
 - **Database Tools**: PostgreSQL client, SQLite, Redis CLI
 - **Testing Tools**: ESLint, Prettier, Jest, Playwright, Cypress
 - **PWA Tools**: Angular CLI, Create React App, Lighthouse, Workbox
+- **Specialized Browsers**: Nyxt Browser (programmable browser)
 - **Specialized Tools**: OSVM CLI, Anza CLI tools (placeholders for future implementation)
 
 To verify your development tools installation:

@@ -113,6 +113,7 @@ echo "Package Managers:"
 check_command "pnpm" "pnpm"
 check_command "yarn" "yarn"
 check_command "cargo" "Cargo"
+check_command "nix" "Nix Package Manager"
 
 # Check Android Studio
 echo ""
@@ -136,6 +137,12 @@ else
     echo_fail "Visual Studio Code not found"
 fi
 
+# Check Cursor IDE
+check_command "cursor" "Cursor IDE"
+
+# Check Zed IDE
+check_command "zed" "Zed IDE"
+
 # Check Insomnia
 if check_snap "insomnia" "Insomnia"; then
     :
@@ -158,6 +165,19 @@ echo ""
 echo "Container Tools:"
 check_command "docker" "Docker"
 check_command "docker-compose" "Docker Compose"
+
+# Kubernetes Tools
+echo ""
+echo "Kubernetes Tools:"
+check_command "k3s" "k3s (Lightweight Kubernetes)"
+check_command "kubectl" "kubectl"
+check_command "k9s" "k9s (Kubernetes CLI manager)"
+check_command "helm" "Helm (Kubernetes package manager)"
+if check_snap "lens" "Lens (Kubernetes IDE)"; then
+    :
+else
+    echo_fail "Lens not found"
+fi
 
 # Version Control & Collaboration
 echo ""
@@ -202,6 +222,23 @@ echo "Database Tools:"
 check_command "psql" "PostgreSQL client"
 check_command "sqlite3" "SQLite"
 check_command "redis-cli" "Redis CLI"
+
+# GPU Computing Tools
+echo ""
+echo "GPU Computing Tools:"
+check_command "nvcc" "CUDA Compiler"
+check_command "nvidia-smi" "NVIDIA System Management Interface"
+
+# AI/ML Tools
+echo ""
+echo "AI/ML Tools:"
+check_command "ollama" "Ollama (Local LLM runner)"
+check_path "$HOME/.local/llama.cpp/main" "llama.cpp"
+
+# Browsers
+echo ""
+echo "Specialized Browsers:"
+check_command "nyxt" "Nyxt Browser"
 
 echo ""
 echo "=============================================="

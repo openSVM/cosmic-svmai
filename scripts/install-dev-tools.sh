@@ -448,6 +448,245 @@ install_pwa_tools() {
     echo_warn "PWA site-specific tools (opensvm.com, larp.dev, aeamcp.com) need manual setup"
 }
 
+# Install CUDA Toolkit
+install_cuda() {
+    echo_info "Installing CUDA Toolkit..."
+    
+    # Check if NVIDIA GPU is present
+    if ! lspci | grep -i nvidia &> /dev/null; then
+        echo_warn "No NVIDIA GPU detected. Skipping CUDA installation."
+        return
+    fi
+    
+    if command -v nvcc &> /dev/null; then
+        echo_info "CUDA already installed: $(nvcc --version | grep 'release' | awk '{print $6}' | cut -c2-)"
+        return
+    fi
+    
+    if command -v apt-get &> /dev/null; then
+        # Install NVIDIA drivers and CUDA on Ubuntu/Debian
+        sudo apt-get update
+        sudo apt-get install -y nvidia-cuda-toolkit nvidia-driver-535
+        echo_info "CUDA toolkit installed. Reboot may be required for driver changes."
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -S --noconfirm cuda nvidia
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y cuda nvidia-driver
+    else
+        echo_warn "Please install CUDA manually for your distribution"
+    fi
+}
+
+# Install Cursor IDE
+install_cursor() {
+    echo_info "Installing Cursor IDE..."
+    
+    if command -v cursor &> /dev/null; then
+        echo_info "Cursor IDE already installed"
+        return
+    fi
+    
+    # Download and install Cursor IDE
+    cd /tmp
+    CURSOR_URL="https://download.cursor.sh/linux/appImage/x64"
+    wget -O cursor.AppImage "$CURSOR_URL"
+    chmod +x cursor.AppImage
+    
+    # Install to local applications
+    mkdir -p "$HOME/.local/bin"
+    mkdir -p "$HOME/.local/share/applications"
+    
+    mv cursor.AppImage "$HOME/.local/bin/cursor"
+    
+    # Create desktop entry
+    cat > "$HOME/.local/share/applications/cursor.desktop" << EOF
+[Desktop Entry]
+Name=Cursor
+Comment=AI-powered code editor
+Exec=$HOME/.local/bin/cursor %F
+Icon=cursor
+Terminal=false
+Type=Application
+Categories=Development;IDE;
+StartupWMClass=cursor
+EOF
+    
+    echo_info "Cursor IDE installed"
+}
+
+# Install Zed IDE
+install_zed() {
+    echo_info "Installing Zed IDE..."
+    
+    if command -v zed &> /dev/null; then
+        echo_info "Zed IDE already installed"
+        return
+    fi
+    
+    # Install Zed from GitHub releases
+    ZED_VERSION=$(curl -s https://api.github.com/repos/zed-industries/zed/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+    ZED_URL="https://github.com/zed-industries/zed/releases/download/${ZED_VERSION}/zed-linux-x86_64.tar.gz"
+    
+    cd /tmp
+    wget -O zed.tar.gz "$ZED_URL"
+    tar -xzf zed.tar.gz
+    
+    mkdir -p "$HOME/.local/bin"
+    mv zed-linux-x86_64/zed "$HOME/.local/bin/"
+    
+    echo_info "Zed IDE installed"
+}
+
+# Install Nyxt Browser
+install_nyxt() {
+    echo_info "Installing Nyxt Browser..."
+    
+    if command -v nyxt &> /dev/null; then
+        echo_info "Nyxt browser already installed"
+        return
+    fi
+    
+    if command -v apt-get &> /dev/null; then
+        # Try to install from package manager first
+        sudo apt-get install -y nyxt || {
+            echo_warn "Nyxt not available in package manager. Please install manually from https://nyxt.atlas.engineer/"
+        }
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -S --noconfirm nyxt || {
+            echo_warn "Nyxt not available in package manager. Please install manually from https://nyxt.atlas.engineer/"
+        }
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -y nyxt || {
+            echo_warn "Nyxt not available in package manager. Please install manually from https://nyxt.atlas.engineer/"
+        }
+    else
+        echo_warn "Please install Nyxt browser manually from https://nyxt.atlas.engineer/"
+    fi
+}
+
+# Install Nix Package Manager
+install_nix() {
+    echo_info "Installing Nix Package Manager..."
+    
+    if command -v nix &> /dev/null; then
+        echo_info "Nix already installed: $(nix --version)"
+        return
+    fi
+    
+    # Install Nix with the official installer
+    curl -L https://nixos.org/nix/install | sh -s -- --daemon
+    
+    # Source the Nix profile
+    if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    fi
+    
+    echo_info "Nix installed. Please restart your shell or run 'source ~/.bashrc'"
+}
+
+# Install k3s (Lightweight Kubernetes)
+install_k3s() {
+    echo_info "Installing k3s (Lightweight Kubernetes)..."
+    
+    if command -v k3s &> /dev/null; then
+        echo_info "k3s already installed: $(k3s --version)"
+        return
+    fi
+    
+    # Install k3s
+    curl -sfL https://get.k3s.io | sh -
+    
+    # Add kubectl alias for k3s
+    if ! grep -q 'alias kubectl="k3s kubectl"' "$HOME/.bashrc"; then
+        echo 'alias kubectl="k3s kubectl"' >> "$HOME/.bashrc"
+    fi
+    
+    echo_info "k3s installed. Use 'sudo k3s kubectl' or 'kubectl' (after sourcing bashrc)"
+}
+
+# Install Kubernetes management tools
+install_k8s_tools() {
+    echo_info "Installing Kubernetes management tools..."
+    
+    # Install kubectl if not already installed
+    if ! command -v kubectl &> /dev/null && ! command -v k3s &> /dev/null; then
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        sudo mv kubectl /usr/local/bin/
+    fi
+    
+    # Install k9s (Kubernetes CLI management tool)
+    if ! command -v k9s &> /dev/null; then
+        K9S_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+        K9S_URL="https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz"
+        
+        cd /tmp
+        wget -O k9s.tar.gz "$K9S_URL"
+        tar -xzf k9s.tar.gz
+        sudo mv k9s /usr/local/bin/
+        
+        echo_info "k9s installed"
+    fi
+    
+    # Install Lens (Kubernetes IDE) via snap if available
+    if command -v snap &> /dev/null; then
+        if ! snap list lens &> /dev/null; then
+            sudo snap install lens --classic || echo_warn "Failed to install Lens via snap"
+        fi
+    fi
+    
+    # Install helm (Kubernetes package manager)
+    if ! command -v helm &> /dev/null; then
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+        echo_info "Helm installed"
+    fi
+}
+
+# Install Ollama (for running LLaMA and other LLMs locally)
+install_ollama() {
+    echo_info "Installing Ollama (for local LLaMA models)..."
+    
+    if command -v ollama &> /dev/null; then
+        echo_info "Ollama already installed: $(ollama --version)"
+        return
+    fi
+    
+    # Install Ollama
+    curl -fsSL https://ollama.com/install.sh | sh
+    
+    echo_info "Ollama installed. You can now run models like: 'ollama run llama2'"
+    echo_info "Popular models: llama2, codellama, mistral, vicuna"
+}
+
+# Install additional AI/ML tools
+install_ai_ml_tools() {
+    echo_info "Installing AI/ML development tools..."
+    
+    # Install llama.cpp for running models
+    if [ ! -d "$HOME/.local/llama.cpp" ]; then
+        cd /tmp
+        git clone https://github.com/ggerganov/llama.cpp.git
+        cd llama.cpp
+        make -j$(nproc)
+        
+        mkdir -p "$HOME/.local/llama.cpp"
+        cp main quantize perplexity "$HOME/.local/llama.cpp/" || true
+        
+        # Add to PATH
+        if ! grep -q 'export PATH="$HOME/.local/llama.cpp:$PATH"' "$HOME/.bashrc"; then
+            echo 'export PATH="$HOME/.local/llama.cpp:$PATH"' >> "$HOME/.bashrc"
+        fi
+        
+        echo_info "llama.cpp compiled and installed"
+    fi
+    
+    # Install Python AI/ML packages if Python is available
+    if command -v pip3 &> /dev/null; then
+        pip3 install --user torch torchvision transformers accelerate bitsandbytes || echo_warn "Failed to install some Python AI packages"
+        echo_info "Python AI/ML packages installed"
+    fi
+}
+
 # Update PATH
 update_path() {
     echo_info "Updating PATH..."
@@ -460,6 +699,7 @@ update_path() {
         '/usr/local/go/bin'
         '$HOME/.deno/bin'
         '$HOME/.bun/bin'
+        '$HOME/.local/llama.cpp'
     )
     
     for path in "${PATHS_TO_ADD[@]}"; do
@@ -467,6 +707,13 @@ update_path() {
             echo "export PATH=\"${path}:\$PATH\"" >> "$HOME/.bashrc"
         fi
     done
+    
+    # Add Nix profile if it exists
+    if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        if ! grep -q 'source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' "$HOME/.bashrc"; then
+            echo 'source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' >> "$HOME/.bashrc"
+        fi
+    fi
     
     echo_info "PATH updated. Please source ~/.bashrc or restart your shell"
 }
@@ -498,8 +745,16 @@ main() {
     install_github_cli
     install_fzf
     
+    echo_info "Installing advanced IDEs..."
+    install_cursor
+    install_zed
+    
     echo_info "Installing container tools..."
     install_docker
+    
+    echo_info "Installing Kubernetes tools..."
+    install_k3s
+    install_k8s_tools
     
     echo_info "Installing network tools..."
     install_tor
@@ -509,9 +764,20 @@ main() {
     
     echo_info "Installing package managers..."
     install_node_package_managers
+    install_nix
     
     echo_info "Installing development and testing tools..."
     install_dev_testing_tools
+    
+    echo_info "Installing GPU computing tools..."
+    install_cuda
+    
+    echo_info "Installing AI/ML tools..."
+    install_ollama
+    install_ai_ml_tools
+    
+    echo_info "Installing specialized browsers..."
+    install_nyxt
     
     echo_info "Installing specialized tools..."
     install_osvm_cli

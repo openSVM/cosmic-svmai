@@ -35,6 +35,8 @@ just dev-tools-check
 ### Development Tools
 
 - **Visual Studio Code**: Lightweight but powerful source code editor
+- **Cursor IDE**: AI-powered code editor with advanced autocomplete and chat features
+- **Zed IDE**: High-performance, multiplayer code editor focused on speed and collaboration
 - **Insomnia**: REST/GraphQL API client
 - **GitHub CLI**: Command line tool for GitHub
 - **fzf**: Command-line fuzzy finder
@@ -44,10 +46,19 @@ just dev-tools-check
 - **Docker**: Platform for developing, shipping, and running applications in containers
 - **Docker Compose**: Tool for defining and running multi-container Docker applications
 
+### Kubernetes Tools
+
+- **k3s**: Lightweight Kubernetes distribution perfect for development
+- **kubectl**: Kubernetes command-line tool
+- **k9s**: Terminal UI for managing Kubernetes clusters
+- **Helm**: Kubernetes package manager
+- **Lens**: Kubernetes IDE for managing clusters (via Snap)
+
 ### Package Managers
 
 - **pnpm**: Fast, disk space efficient package manager
 - **yarn**: Reliable, secure, and fast dependency management
+- **Nix**: Purely functional package manager with reproducible builds
 - **Cargo**: Rust package manager (installed with Rust)
 
 ### Network Tools
@@ -70,6 +81,22 @@ just dev-tools-check
 - **PostgreSQL client**: Command line client for PostgreSQL
 - **SQLite**: Self-contained SQL database engine
 - **Redis CLI**: Command line interface for Redis
+
+### GPU Computing Tools
+
+- **CUDA Toolkit**: NVIDIA's parallel computing platform and programming model
+- **nvidia-smi**: NVIDIA System Management Interface for GPU monitoring
+
+### AI/ML Tools
+
+- **Ollama**: Run large language models locally (LLaMA, Mistral, CodeLLaMA, etc.)
+- **llama.cpp**: Efficient inference of LLaMA models in C++
+- **PyTorch**: Deep learning framework (via pip)
+- **Transformers**: State-of-the-art ML library (via pip)
+
+### Specialized Browsers
+
+- **Nyxt Browser**: Hackable, programmable browser with Lisp-based configuration
 
 ### Development & Testing Tools
 
@@ -151,6 +178,91 @@ echo 'export PATH="$HOME/.deno/bin:$PATH"' >> ~/.bashrc
 ```bash
 curl -fsSL https://bun.sh/install | bash
 echo 'export PATH="$HOME/.bun/bin:$PATH"' >> ~/.bashrc
+```
+
+### CUDA Toolkit
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install nvidia-cuda-toolkit nvidia-driver-535
+
+# Check installation
+nvcc --version
+nvidia-smi
+```
+
+### Cursor IDE
+```bash
+# Download and install AppImage
+wget -O cursor.AppImage https://download.cursor.sh/linux/appImage/x64
+chmod +x cursor.AppImage
+mkdir -p ~/.local/bin
+mv cursor.AppImage ~/.local/bin/cursor
+```
+
+### Zed IDE
+```bash
+# Download from GitHub releases
+ZED_VERSION=$(curl -s https://api.github.com/repos/zed-industries/zed/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+wget -O zed.tar.gz "https://github.com/zed-industries/zed/releases/download/${ZED_VERSION}/zed-linux-x86_64.tar.gz"
+tar -xzf zed.tar.gz
+mkdir -p ~/.local/bin
+mv zed-linux-x86_64/zed ~/.local/bin/
+```
+
+### Nix Package Manager
+```bash
+curl -L https://nixos.org/nix/install | sh -s -- --daemon
+# Restart shell or source the nix profile
+```
+
+### k3s (Lightweight Kubernetes)
+```bash
+curl -sfL https://get.k3s.io | sh -
+# Add kubectl alias
+echo 'alias kubectl="k3s kubectl"' >> ~/.bashrc
+```
+
+### Kubernetes Tools
+```bash
+# kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+# k9s
+K9S_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+wget -O k9s.tar.gz "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz"
+tar -xzf k9s.tar.gz
+sudo mv k9s /usr/local/bin/
+
+# helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+
+### Ollama (Local LLM Runner)
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Run a model (example)
+ollama run llama2
+ollama run codellama
+```
+
+### llama.cpp
+```bash
+git clone https://github.com/ggerganov/llama.cpp.git
+cd llama.cpp
+make -j$(nproc)
+# Binaries will be in the current directory
+```
+
+### Nyxt Browser
+```bash
+# Ubuntu/Debian (if available in repos)
+sudo apt install nyxt
+
+# Otherwise download from https://nyxt.atlas.engineer/
 ```
 
 ## PWA Development
