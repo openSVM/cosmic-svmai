@@ -22,6 +22,7 @@ jobs:
         with:
           prompt: |
             You are project manager for AI. Enhance and plan the execution of the following GitHub issue. make sure you explained well what we expect, and acceptance criteria, provide links that might help with more effecient execution
+            All quotes must be escaped so it wouldnt bug out, better even without quotes at all
             Title: ${{ github.event.issue.title }}
             Body: ${{ github.event.issue.body }}
 
