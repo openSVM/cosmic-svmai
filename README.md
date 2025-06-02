@@ -36,10 +36,190 @@ just dev-tools-check
 - ✅ **Comprehensive**: From systems programming to AI/ML to blockchain development
 - ✅ **Production Ready**: Enterprise-grade tools used by top companies
 
+#### Development Tools Ecosystem
+
+```mermaid
+mindmap
+  root((COSMIC SVM<br/>Dev Tools<br/>2,600+))
+    Programming Languages
+      Core Languages (25+)
+        Rust, Go, Python
+        Node.js, Deno, Bun
+        Zig, Crystal, Swift
+      Functional
+        Clojure, Scala, Haskell
+        Erlang, Elixir
+      Scientific
+        Julia, R, MATLAB
+    IDEs & Editors (15+)
+      Modern
+        VS Code, Cursor IDE
+        Zed IDE
+      Enterprise
+        IntelliJ, Eclipse
+        WebStorm, NetBeans
+      Terminal
+        Vim, Emacs, Helix
+    Web Development (40+)
+      Frameworks
+        React, Angular, Vue
+        Svelte, SolidJS
+      Build Tools
+        Vite, Webpack, esbuild
+        Rollup, Parcel
+      Styling
+        Tailwind, Sass, PostCSS
+    Cloud & Infrastructure (25+)
+      Multi-Cloud
+        AWS, Azure, GCP
+        DigitalOcean, Linode
+      IaC
+        Terraform, Pulumi
+        Ansible, Chef
+      Containers
+        Docker, Podman, k8s
+    Security & Network (30+)
+      Scanning
+        Nmap, Nikto, OpenVAS
+      Penetration Testing
+        Metasploit, Burp Suite
+      VPN
+        WireGuard, Tailscale, Tor
+    AI/ML & Blockchain
+      AI Tools
+        PyTorch, TensorFlow
+        Ollama, Transformers
+      Blockchain
+        Hardhat, Foundry
+        Solidity, Web3
+    Database Systems (20+)
+      SQL
+        PostgreSQL, MySQL
+      NoSQL
+        MongoDB, Redis, Neo4j
+      Big Data
+        Cassandra, InfluxDB
+    Specialized
+      Game Dev
+        Godot, Blender, Unity
+      Mobile
+        React Native, Flutter
+      Scientific
+        Jupyter, NumPy, SciPy
+      Media
+        FFmpeg, OBS, Audacity
+```
+
 For complete documentation, see [docs/DEV-TOOLS.md](docs/DEV-TOOLS.md).
 
 ---
 
+## Architecture Overview
+
+The COSMIC Desktop Environment is built with a modular architecture that separates core libraries, system services, and user applications:
+
+```mermaid
+graph TB
+    subgraph "COSMIC Libraries & Protocols"
+        LP[libcosmic]
+        CP[cosmic-protocols]
+        CT[cosmic-text]
+        CTH[cosmic-theme]
+        CTI[cosmic-time]
+    end
+    
+    subgraph "Core System Services"
+        CS[cosmic-session]
+        CC[cosmic-comp<br/>Wayland Compositor]
+        CSD[cosmic-settings-daemon]
+        CG[cosmic-greeter<br/>Display Manager]
+        CN[cosmic-notifications]
+        CI[cosmic-idle]
+        XDG[xdg-desktop-portal-cosmic]
+    end
+    
+    subgraph "Desktop Environment"
+        CPL[cosmic-panel]
+        CBG[cosmic-bg]
+        CL[cosmic-launcher]
+        COSD[cosmic-osd]
+        CWE[cosmic-workspaces-epoch]
+        CA[cosmic-applets]
+    end
+    
+    subgraph "User Applications"
+        CF[cosmic-files]
+        CE[cosmic-edit]
+        CTERM[cosmic-term]
+        CSET[cosmic-settings]
+        CST[cosmic-store]
+        CP2[cosmic-player]
+        CSS[cosmic-screenshot]
+        CTE[cosmic-theme-editor]
+        CAL[cosmic-applibrary]
+    end
+    
+    subgraph "External Integration"
+        PL[pop-launcher]
+        CR[cosmic-randr]
+        CICO[cosmic-icons]
+    end
+    
+    %% Dependencies
+    LP --> CS
+    LP --> CC
+    LP --> CSD
+    LP --> CPL
+    LP --> CF
+    LP --> CE
+    LP --> CTERM
+    LP --> CSET
+    LP --> CST
+    
+    CP --> CC
+    CP --> XDG
+    
+    CT --> CF
+    CT --> CE
+    CT --> CTERM
+    
+    CTH --> CPL
+    CTH --> CBG
+    CTH --> CTE
+    
+    %% System interactions
+    CS --> CC
+    CS --> CSD
+    CS --> CG
+    CS --> CPL
+    
+    CC --> CBG
+    CC --> CPL
+    CC --> CL
+    CC --> COSD
+    CC --> CWE
+    
+    CSD --> CSET
+    CSD --> CTH
+    
+    %% External integrations
+    PL --> CL
+    CR --> CSET
+    CICO --> CPL
+    CICO --> CF
+    
+    classDef library fill:#e1f5fe
+    classDef service fill:#f3e5f5
+    classDef desktop fill:#e8f5e8
+    classDef app fill:#fff3e0
+    classDef external fill:#fce4ec
+    
+    class LP,CP,CT,CTH,CTI library
+    class CS,CC,CSD,CG,CN,CI,XDG service
+    class CPL,CBG,CL,COSD,CWE,CA desktop
+    class CF,CE,CTERM,CSET,CST,CP2,CSS,CTE,CAL app
+    class PL,CR,CICO external
+```
 
 ## Components of COSMIC Desktop
 * [cosmic-applets](https://github.com/pop-os/cosmic-applets)
@@ -316,6 +496,66 @@ COSMIC DE is very much still work-in-progress and thus does not follow a version
 We do our best to keep the referenced submodule commits in this repository building and working together, as a consequence they might not contain the latest updates and features from these repositories (yet).
 
 Notes on versioning and packaging all these components together properly will be added at a later stage once COSMIC DE gets its first release.
+
+## Installation Guide
+
+Choose your installation method based on your distribution and needs:
+
+```mermaid
+flowchart TD
+    Start([Want to install COSMIC?]) --> OS{Which OS?}
+    
+    OS -->|Pop!_OS| PopOS[Pop!_OS]
+    OS -->|Arch Linux| Arch[Arch Linux]
+    OS -->|Fedora| Fedora[Fedora]
+    OS -->|NixOS| NixOS[NixOS]
+    OS -->|openSUSE| SUSE[openSUSE Tumbleweed]
+    OS -->|Gentoo| Gentoo[Gentoo]
+    OS -->|Other| Other[Other Distribution]
+    
+    PopOS --> PopVer{Which version?}
+    PopVer -->|24.04 Alpha| Pop24[✅ Recommended<br/>Latest features]
+    PopVer -->|22.04 LTS| Pop22[⚠️ Legacy<br/>Limited updates]
+    
+    Pop24 --> PopInstall[Install from ISO<br/>or upgrade with<br/>pop-upgrade]
+    Pop22 --> PopLegacy[Enable Wayland<br/>+ Install cosmic-session]
+    
+    Arch --> ArchInstall[pacman -S cosmic-session<br/>or pacman -S cosmic]
+    Fedora --> FedoraInstall[dnf copr enable ryanabx/cosmic-epoch<br/>dnf install cosmic-desktop]
+    NixOS --> NixInstall[Add to configuration.nix:<br/>services.desktopManager.cosmic.enable = true]
+    SUSE --> SUSEInstall[opi patterns-cosmic<br/>Select X11:COSMIC:Factory]
+    Gentoo --> GentooInstall[Add cosmic-overlay<br/>emerge cosmic-meta]
+    
+    Other --> BuildChoice{Build from source?}
+    BuildChoice -->|Yes| BuildSource[Install dependencies<br/>+ git clone --recurse-submodules<br/>+ just sysext]
+    BuildChoice -->|No| Wait[Wait for your distro<br/>to package COSMIC]
+    
+    PopInstall --> Login[Log out → Select COSMIC<br/>at login screen]
+    PopLegacy --> Login
+    ArchInstall --> Login
+    FedoraInstall --> Login
+    NixInstall --> Login
+    SUSEInstall --> Login
+    GentooInstall --> Login
+    BuildSource --> SystemExt[Move cosmic-sysext to<br/>/var/lib/extensions<br/>+ systemctl enable systemd-sysext]
+    SystemExt --> Login
+    
+    Login --> DevTools{Need dev tools?}
+    DevTools -->|Yes| InstallTools[just dev-tools<br/>2,600+ tools installed]
+    DevTools -->|No| Enjoy[🎉 Enjoy COSMIC!]
+    InstallTools --> CheckTools[just dev-tools-check<br/>Verify installation]
+    CheckTools --> Enjoy
+    
+    classDef recommended fill:#c8e6c9
+    classDef warning fill:#ffecb3
+    classDef action fill:#e1f5fe
+    classDef end fill:#f3e5f5
+    
+    class Pop24,PopInstall recommended
+    class Pop22,PopLegacy warning
+    class ArchInstall,FedoraInstall,NixInstall,SUSEInstall,GentooInstall,BuildSource,SystemExt,InstallTools,CheckTools action
+    class Enjoy end
+```
 
 ## Installing on Pop!\_OS
 
