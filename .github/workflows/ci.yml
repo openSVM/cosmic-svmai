@@ -11,7 +11,7 @@ on:
   pull_request:
   push:
   schedule:
-    - cron: '0 7 * * *' # Midnight MST daily
+    - cron: '21 21 21 * *' # Midnight MST daily
 
 jobs:
   Test:
